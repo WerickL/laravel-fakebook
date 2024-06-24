@@ -3,7 +3,7 @@
 namespace Api\User\Repository;
 
 use Api\User\Model\User;
-use UserDto;
+use Api\User\Model\UserDto;
 
 interface IUserRepository
 {

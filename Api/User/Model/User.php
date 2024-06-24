@@ -6,6 +6,7 @@ namespace Api\User\Model;
 
 use App\Models\Post;
 use Database\Factories\UserFactory;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -38,6 +39,9 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+    protected $dispatchesEvents = [
+        "created" => Registered::class
+    ];
 
     /**
      * Get the attributes that should be cast.
@@ -51,11 +55,12 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-    public function posts(): HasMany{
+    public function posts(): HasMany
+    {
         return $this->hasMany(Post::class);
     }
     protected static function newFactory(): Factory
-{
-    return UserFactory::new();
-}
+    {
+        return UserFactory::new();
+    }
 }

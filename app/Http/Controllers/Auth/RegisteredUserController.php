@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use Api\User\Http\Requests\CreateUserRequest;
 use App\Http\Controllers\Controller;
 use Api\User\Model\User;
 use Api\User\Repository\IUserRepository;
@@ -10,9 +11,9 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
+use Api\User\Model\UserDto;
 
 class RegisteredUserController extends Controller
 {
@@ -33,25 +34,10 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request): RedirectResponse
+    public function store(CreateUserRequest $request): RedirectResponse
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            "username" =>  'required|string|lowercase|max:255|unique:'.User::class
-        ]);
-
         
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            "username" => $request->username
-        ]);
-
-        event(new Registered($user));
-
+        $user = $this->repository->create($request->toDto());
         Auth::login($user);
 
         return redirect(route('dashboard', absolute: false));
