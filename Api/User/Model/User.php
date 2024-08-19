@@ -4,7 +4,7 @@ namespace Api\User\Model;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
-use App\Models\Post;
+use Api\Post\Model\Post;
 use Database\Factories\UserFactory;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Database\Eloquent\Factories\Factory;

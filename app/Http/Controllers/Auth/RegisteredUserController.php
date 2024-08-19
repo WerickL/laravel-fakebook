@@ -18,8 +18,8 @@ use Api\User\Model\UserDto;
 class RegisteredUserController extends Controller
 {
     public function __construct(protected IUserRepository $repository )
-    {
-        
+    { 
+
     }
     /**
      * Display the registration view.
@@ -35,11 +35,11 @@ class RegisteredUserController extends Controller
      * @throws \Illuminate\Validation\ValidationException
      */
     public function store(CreateUserRequest $request): RedirectResponse
-    {
-        
+    { 
+
         $user = $this->repository->create($request->toDto());
         Auth::login($user);
-
+        
         return redirect(route('dashboard', absolute: false));
     }
 }

@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Posts;
 
+use Api\Post\Model\Post;
 use Api\User\Model\User;
 use App\Http\Controllers\Controller;
-use App\Models\Post;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response as HttpResponse;
@@ -40,8 +40,6 @@ class PostsController extends Controller
         } catch (\Throwable $th) {
             dd($th->getMessage());
         }
-        
-
         return response("", 201);
     }
 

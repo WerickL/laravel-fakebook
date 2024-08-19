@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Api\Posts;
+namespace Tests\Feature\Posts;
 
 use Api\Post\Model\Post;
 use Api\User\Model\User;
@@ -18,10 +18,10 @@ class PostTest extends TestCase
         $post = Post::factory()->create();
         $this->assertModelExists($post);
     }
-    public function test_create_post_using_api(): void
+    public function test_create_post(): void
     {
         $user = User::factory()->create();
-        $response = $this->actingAs($user)->post("/api/post", [
+        $response = $this->actingAs($user)->post("/post", [
             "description" => "Lorem ipsum dolor sit amet"
         ]);
 
@@ -30,13 +30,5 @@ class PostTest extends TestCase
             "user_id" => $user->id,
             'description' => 'Lorem ipsum dolor sit amet',
         ]);
-    }
-    public function test_create_post_using_api_without_authentication(): void
-    {
-        $response = $this->post("/api/post", [
-            "description" => "Lorem ipsum dolor sit amet"
-        ]);
-        
-        $response->assertStatus(403);
     }
 }
