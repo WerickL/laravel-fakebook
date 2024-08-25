@@ -21,8 +21,11 @@ class PostTest extends TestCase
     public function test_create_post_using_api(): void
     {
         $user = User::factory()->create();
+        
         $response = $this->actingAs($user)->post("/api/post", [
             "description" => "Lorem ipsum dolor sit amet"
+        ],[
+            "Accept" => "application/json"
         ]);
 
         $response->assertStatus(201);

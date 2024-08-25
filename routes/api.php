@@ -7,10 +7,10 @@ use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('api')->group(function () {
-    Route::post("/user", [UserController::class, "postUser"]);
+Route::middleware('auth:api')->group(function () {
     Route::get("/user", function (Request $request) {
-        return "oi";
+        return $request->user();
     });
     Route::post("/post", [PostController::class, "postPost"]);
 });
+Route::post("/user", [UserController::class, "postUser"]);
