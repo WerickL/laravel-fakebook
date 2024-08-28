@@ -6,6 +6,7 @@ use Api\Post\Model\Post;
 use Api\User\Model\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Laravel\Passport\Passport;
 use Tests\TestCase;
 
 class PostTest extends TestCase
@@ -21,8 +22,8 @@ class PostTest extends TestCase
     public function test_create_post_using_api(): void
     {
         $user = User::factory()->create();
-        
-        $response = $this->actingAs($user)->post("/api/post", [
+        Passport::actingAs($user);
+        $response = $this->post("/api/post", [
             "description" => "Lorem ipsum dolor sit amet"
         ],[
             "Accept" => "application/json"
@@ -38,8 +39,11 @@ class PostTest extends TestCase
     {
         $response = $this->post("/api/post", [
             "description" => "Lorem ipsum dolor sit amet"
+        ],
+        [
+            "Accept" => "application/json"
         ]);
         
-        $response->assertStatus(403);
+        $response->assertStatus(401);
     }
 }

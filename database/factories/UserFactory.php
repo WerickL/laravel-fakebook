@@ -6,7 +6,7 @@ use Api\User\Model\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-
+use Mockery;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Api\User\Model\User>
  */
@@ -16,11 +16,7 @@ class UserFactory extends Factory
      * The current password being used by the factory.
      */
     protected static ?string $password;
-    /**
-     * The name of the factory's corresponding model.
-     *
-     * @var class-string<\Illuminate\Database\Eloquent\Model>
-     */
+    
     protected $model = User::class;
     /**
      * Define the model's default state.
