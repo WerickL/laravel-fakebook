@@ -12,5 +12,6 @@ Route::middleware('auth:api')->group(function () {
         return $request->user();
     });
     Route::post("/post", [PostController::class, "postPost"]);
+    Route::patch("/user/{id}", [UserController::class, "patchUser"]);
 });
 Route::post("/user", [UserController::class, "postUser"]);

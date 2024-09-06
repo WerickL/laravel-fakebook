@@ -10,11 +10,10 @@ class UserRepository implements IUserRepository
 {
     public function create(UserDto $userData): User
     {
-        return User::create([
-            'name' => $userData->name,
-            'email' => $userData->email,
-            'password' => Hash::make($userData->password),
-            "username" => $userData->username
-        ]);
+        return User::create($userData->toArray());
+    }
+    public function patch(User $user,UserDto $data): User
+    {
+        return $user->fill($data->toArray());
     }
 }
