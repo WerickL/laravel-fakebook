@@ -16,4 +16,7 @@ class UserRepository implements IUserRepository
     {
         return $user->fill($data->toArray());
     }
+    public function find(string|int $id): User{
+        return User::where("id", (int) $id)->first();
+    }
 }

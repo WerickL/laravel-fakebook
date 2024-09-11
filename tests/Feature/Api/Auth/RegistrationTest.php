@@ -48,12 +48,11 @@ class RegistrationTest extends TestCase
     }
     public function test_users_can_not_change_another_user_using_api(): void
     {
-        $user = User::factory()->create();
         $user2 = User::factory()->create();
-        $response = $this->post('/api/user', [
-            'name' => $user->name,
-            'email' => $user->email,
-            "username" =>$user->username,
+        $response = $this->postJson('/api/user', [
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+            "username" => "teste.user",
             'password' => 'password',
             'password_confirmation' => 'password',
         ]);
@@ -62,11 +61,21 @@ class RegistrationTest extends TestCase
             'email' => 'test@example.com',
             "username" => "teste.user"
         ]);
-        dd($response);
-        Passport::actingAs($user);
-        $response = $this->patch('/api/user/'. $user->id, [
+        $responseData = $response->json();
+        $userId = $responseData['id'];
+        Passport::actingAs($user2);
+        $response = $this->patchJson("/api/user/$userId", [
             "username" => "teste.user",
         ]);
         $response->assertStatus(403);
+    }
+    public function test_users_can_change_your_own_user_using_api(): void
+    {
+        $user = User::factory()->create();
+        Passport::actingAs($user);
+        $response = $this->patchJson("/api/user/$user->id", [
+            "username" => "teste.user",
+        ]);
+        $response->assertStatus(200);
     }
 }

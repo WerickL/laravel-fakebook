@@ -6,10 +6,10 @@ use Illuminate\Support\Facades\Hash;
 class UserDto
 {
     public function __construct(
-    public string $name = null, 
-    public string $email = null,
-    public string $password = null,
-    public string $username = null)
+    public $name = null, 
+    public $email= null,
+    public $password= null,
+    public $username= null)
     {
     }
     public function toArray(): array

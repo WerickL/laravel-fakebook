@@ -8,6 +8,7 @@ use Api\User\Repository\IUserRepository;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Gate;
 
 class UserController extends Controller
 {
@@ -22,8 +23,9 @@ class UserController extends Controller
     }
     public function patchUser(PatchUserRequest $request, string $id): JsonResponse
     {
-        return response()->json($id, 200);
-        $user = $this->repository->patch($request->user, $request->toDto());
+        $model = $this->repository->find($id);
+        Gate::authorize("update", $model);
+        $user = $this->repository->patch($request->user(), $request->toDto());
         return response()->json($user, 200);
     }
 }
