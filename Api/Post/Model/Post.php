@@ -2,12 +2,14 @@
 
 namespace Api\Post\Model;
 
+use Api\File\Model\File;
 use Api\User\Model\User;
 use Database\Factories\PostFactory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Post extends Model
 {
@@ -25,4 +27,9 @@ class Post extends Model
     {
         return PostFactory::new();
     }
+    public function files(): MorphMany
+    {
+        return $this->morphMany(File::class, 'fileable');
+    }
+
 }

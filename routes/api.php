@@ -1,5 +1,6 @@
 <?php
 
+use Api\File\Http\Controllers\FileController;
 use Api\Post\Http\Controllers\PostController;
 use Api\User\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
@@ -13,5 +14,7 @@ Route::middleware('auth:api')->group(function () {
     });
     Route::post("/post", [PostController::class, "postPost"]);
     Route::patch("/user/{id}", [UserController::class, "patchUser"]);
+    Route::get("/file", [FileController::class, "getFile"]);
+    Route::post("/file", [FileController::class, "postFile"]);
 });
 Route::post("/user", [UserController::class, "postUser"]);
