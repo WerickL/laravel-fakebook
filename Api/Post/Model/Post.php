@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use PostStatusEnum;
 
 class Post extends Model
 {
@@ -31,5 +32,10 @@ class Post extends Model
     {
         return $this->morphMany(File::class, 'fileable');
     }
-
+    protected function casts(): array
+    {
+        return [
+            'status' => PostStatusEnum::class,
+        ];
+    }
 }

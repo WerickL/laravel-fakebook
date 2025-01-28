@@ -12,4 +12,4 @@ class PostRepositoryServiceProvider extends ServiceProvider
             return new PostRepository();
         });
     }
-} 
+}

@@ -2,13 +2,19 @@
 
 namespace Api\File\Http\Controllers;
 
+use Api\File\Http\Requests\CreateFileRequest;
 use Api\File\Model\File;
+use Api\File\Repository\IFileRepository;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Ramsey\Uuid\Uuid;
 
 class FileController extends Controller
 {
+    public function __construct(protected IFileRepository $repository)
+    {
+        
+    }
     /**
      * Display a listing of the resource.
      */
@@ -64,18 +70,27 @@ class FileController extends Controller
     {
         //
     }
-    public function postFile(Request $request){
-        $file = File::create([
-            "name"=>"teste_arquivo.png",
-            "description" => "teste",
-            "uuid" => Uuid::uuid4(),
-            "content_type" => "image/png"
-        ]);
-        // cria model 
-        // cria uuid
-        // cria arquivo com o uuid
-        // adiciona nomne na model
-        return response()->json($file,201);
+    public function postFile(CreateFileRequest $request){
+        
+        $file = $this->repository->create($request->toDto());
+        if (!empty($file)) {
+            $contentFile =  $request->file('content');
+            if (empty($contentFile)) {
+                return response()->json([
+                    "detail" => "Nenhum arquivo foi localizado"
+                ], 422);
+            }
+            $success = $this->repository->setContent($file,$contentFile);
+            if (!$success) {
+                return response()->json([
+                    "detail" => "Não foi possível salvar o arquivo no disco"
+                ], 422);
+            }
+            return response()->json($file,201);
+        }
+        return response()->json([
+            "detail" => "Um erro desconhecido ocorreu"
+        ],400);
     }
     public function getFile(Request $request){
         return response()->json("Opa",200);

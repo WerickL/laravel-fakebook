@@ -12,10 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('files', function (Blueprint $table) {
-            $table->uuid('uuid')->unique();
-            $table->string('name');
-            $table->string('description')->nullable();
-            $table->string('content_type');
+            $table->unsignedBigInteger("fileable_id")->nullable()->change();
+            $table->unsignedBigInteger("fileable_type")->nullable()->change();
         });
     }
 
