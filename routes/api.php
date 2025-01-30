@@ -13,6 +13,7 @@ Route::middleware('auth:api')->group(function () {
         return $request->user();
     });
     Route::post("/post", [PostController::class, "postPost"]);
+    Route::patch("/post/{id}", [PostController::class, "patchPost"]);
     Route::patch("/user/{id}", [UserController::class, "patchUser"]);
     Route::get("/file", [FileController::class, "getFile"]);
     Route::post("/file", [FileController::class, "postFile"]);

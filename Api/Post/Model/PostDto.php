@@ -10,4 +10,10 @@ class PostDto
         public User $user)
     {
     }
+    
+    public function toArray(){
+        return [
+            "description" => $this->description
+        ];
+    }
 }

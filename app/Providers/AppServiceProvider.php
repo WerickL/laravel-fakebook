@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Api\Post\Model\Post;
 use Api\User\Model\User;
 use Api\User\Policies\UserPolicy;
 use Illuminate\Support\Facades\Gate;
@@ -28,6 +29,9 @@ class AppServiceProvider extends ServiceProvider
         Gate::guessPolicyNamesUsing(function (string $modelClass) {
             return 'Api\\'. class_basename($modelClass). '\\Policies\\' . class_basename($modelClass) . 'Policy';
         });
-        //Gate::policy(User::class, UserPolicy::class);
+        Gate::policy(User::class, UserPolicy::class);
+        Gate::define('update-post', function (User $user, Post $post) {
+            return $user->id === $post->user_id;
+        });
     }
 }

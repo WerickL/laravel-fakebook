@@ -1,5 +1,5 @@
 <?php 
-
+namespace Api\Post\Model;
 enum PostStatusEnum: string
 {
     case Draft = "D";

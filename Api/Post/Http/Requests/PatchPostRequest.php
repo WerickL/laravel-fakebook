@@ -5,7 +5,7 @@ use Api\Post\Model\PostDto;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
-class CreatePostRequest extends PostRequest
+class PatchPostRequest extends PostRequest
 {
     public function authorize() :bool
     {
@@ -15,10 +15,8 @@ class CreatePostRequest extends PostRequest
         }
         return false;
     }
-    public function rules():array
+    public function rules(): void
     {
-        return [
-            "description"=>"required|string|max:255"
-        ];
     }
+    
 }
