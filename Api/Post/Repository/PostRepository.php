@@ -4,6 +4,8 @@ use Api\Post\Model\Post;
 use Api\Post\Model\PostDto;
 use Api\Post\Model\PostStatusEnum;
 use Api\Post\Repository\IPostRepository;
+use Api\User\Model\User;
+use Illuminate\Database\Eloquent\Collection;
 
 class PostRepository implements IPostRepository{
     public function create(PostDto $postDto): Post
@@ -27,6 +29,13 @@ class PostRepository implements IPostRepository{
     }
     public function find($id): Post{
         return Post::where("id", (int) $id)->first();
+    }
+    /**
+     * @return Post[]
+     */
+    public function findAll(User $user): Collection
+    {
+        return Post::where("user_id", $user->id)->get();
     }
     public function patch(Post $post, PostDto $data): Post
     {
