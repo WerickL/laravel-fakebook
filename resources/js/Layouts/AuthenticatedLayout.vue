@@ -6,13 +6,16 @@ import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link } from '@inertiajs/vue3';
-import Feed from '../Pages/Feed/Feed.vue'
-const showingNavigationDropdown = ref(false);
 export default {
     name: 'AuthenticatedLayout',
     components: {
-        ApplicationLogo,Dropdown,DropdownLink,NavLink,ResponsiveNavLink,Link,Feed
+        ApplicationLogo,Dropdown,DropdownLink,NavLink,ResponsiveNavLink,Link
     },
+    data:function () {
+        return {
+            showingNavigationDropdown:   ref(false)
+        }
+    } 
 };
 </script>
 
@@ -35,7 +38,7 @@ export default {
 
                             <!-- Navigation Links -->
                             <div class="tw-hidden tw-space-x-8 sm:tw--my-px sm:tw-ms-10 sm:tw-flex">
-                                <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
+                                <NavLink :href="route('feed.show')" :active="route().current('feed.show')">
                                     Feed
                                 </NavLink>
                             </div>
@@ -70,7 +73,7 @@ export default {
                                     </template>
 
                                     <template #content>
-                                        <DropdownLink :href="route('profile.edit')"> Profile </DropdownLink>
+                                        <DropdownLink :href="route('profile.edit')"> Profile {{ route('profile.edit') }}</DropdownLink>
                                         <DropdownLink :href="route('logout')" method="post" as="button">
                                             Log Out
                                         </DropdownLink>
@@ -143,19 +146,19 @@ export default {
             </nav>
 
             <!-- Page Heading -->
-            <!-- <header class="tw-bg-white shadow" v-if="$slots.header">
-                <div class="tw-max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <header class="tw-bg-white shadow" v-if="$slots.header">
+                <div class="tw-max-w-7xl tw-mx-auto tw-py-6 tw-px-4 sm:tw-px-6 lg:tw-px-8">
                     <slot name="header" />
                 </div>
-            </header> -->
+            </header>
 
             <!-- Page Content -->
-            <!-- <main>
+            <main>
                 <slot />
-            </main> -->
-            <Feed>
+            </main>
+            <!-- <Feed>
 
-            </Feed>
+            </Feed> -->
         </div>
     </div>
 </template>

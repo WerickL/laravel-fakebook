@@ -3,20 +3,27 @@
 namespace App\Http\Controllers\Posts;
 
 use Api\Post\Model\Post;
-use Api\User\Model\User;
+use Api\Post\Repository\IPostRepository;
 use App\Http\Controllers\Controller;
-use GuzzleHttp\Psr7\Response;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response as HttpResponse;
+use Inertia\Inertia;
 
 class PostsController extends Controller
 {
+    public function __construct(protected IPostRepository $repository)
+    {
+        
+    }
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $posts = $this->repository->findAll($request->user());
+        return Inertia::render("Feed/Index", [
+           "posts" => $posts
+        ]);
     }
 
     /**
