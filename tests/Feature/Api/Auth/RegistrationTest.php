@@ -4,6 +4,7 @@ namespace Tests\Feature\Api\Auth;
 use Api\User\Model\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Laravel\Passport\Passport;
 use Tests\TestCase;
@@ -78,4 +79,85 @@ class RegistrationTest extends TestCase
         ]);
         $response->assertStatus(200);
     }
+    public function test_following_relationship_is_created()
+    {
+        $user1 = User::factory()->create();
+        $user2 = User::factory()->create();
+
+        $user1->following()->attach($user2->id);
+
+        $this->assertDatabaseHas('follows', [
+            'follower_user_id' => $user1->id,
+            'followed_user_id' => $user2->id
+        ]);
+    }
+    public function test_user_can_retrieve_followers()
+    {
+        $user1 = User::factory()->create();
+        $user2 = User::factory()->create();
+
+        $user1->following()->attach($user2->id);
+
+        $this->assertTrue($user2->followers->contains($user1));
+    }
+    public function test_user_can_retrieve_following()
+    {
+        $user1 = User::factory()->create();
+        $user2 = User::factory()->create();
+    
+        $user1->following()->attach($user2->id);
+    
+        $this->assertTrue($user1->following->contains($user2));
+    }
+    // public function test_user_cannot_follow_same_user_twice()
+    // {
+    //     $user1 = User::factory()->create();
+    //     $user2 = User::factory()->create();
+
+    //     $user1->following()->attach($user2->id);
+    //     $user1->following()->attach($user2->id); // Deve ser ignorado pelo banco (se a tabela pivot for única)
+
+    //     $this->assertEquals(1, DB::table('follows')
+    //         ->where('follower_user_id', $user1->id)
+    //         ->where('followed_user_id', $user2->id)
+    //         ->count()
+    //     );
+    // }
+    public function test_user_can_follow_another_user_via_api()
+    {
+        $user1 = User::factory()->create();
+        $user2 = User::factory()->create();
+
+        Passport::actingAs($user1);
+        $response = $this->getJson("/api/user/follow/$user2->id");
+        $response->assertStatus(200)
+            ->assertJson([
+                'message' => 'User followed successfully'
+            ]);
+
+        $this->assertDatabaseHas('follows', [
+            'follower_user_id' => $user1->id,
+            'followed_user_id' => $user2->id
+        ]);
+    }
+    public function test_user_cannot_follow_same_user_twice_via_api()
+{
+    $user1 = User::factory()->create();
+    $user2 = User::factory()->create();
+
+    // Seguir o usuário 2 duas vezes
+     Passport::actingAs($user1);
+     $response =$this->getJson("/api/user/follow/$user2->id");
+     $response =$this->getJson("/api/user/follow/$user2->id");
+    // Verifica se a resposta indica que já segue o usuário
+    $response->assertStatus(400);
+    
+
+    // Verifica se só há um registro no banco
+    $this->assertEquals(1, DB::table('follows')
+        ->where('follower_user_id', $user1->id)
+        ->where('followed_user_id', $user2->id)
+        ->count());
+}
+
 }

@@ -19,4 +19,13 @@ class UserRepository implements IUserRepository
     public function find(string|int $id): User{
         return User::where("id", (int) $id)->first();
     }
+    public function follow(User $user, User $followed): bool
+    {
+        try {
+            $user->following()->attach($followed);
+        } catch (\Throwable $th) {
+            return false;
+        }
+        return true;
+    }
 }

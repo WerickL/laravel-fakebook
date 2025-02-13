@@ -16,6 +16,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get("/post", [PostController::class, "getPost"]);
     Route::patch("/post/{id}", [PostController::class, "patchPost"]);
     Route::patch("/user/{id}", [UserController::class, "patchUser"]);
+    Route::get("/user/follow/{id}", [UserController::class, "followUser"]);
     Route::get("/file", [FileController::class, "getFile"]);
     Route::post("/file", [FileController::class, "postFile"]);
 });

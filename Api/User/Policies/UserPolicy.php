@@ -61,4 +61,10 @@ class UserPolicy
     {
         return false;
     }
+    public function follow(User $user, User $model): bool
+    {
+        return !$model->is($user);
+
+        
+    }
 }

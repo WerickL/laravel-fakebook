@@ -28,4 +28,21 @@ class UserController extends Controller
         $user = $this->repository->patch($request->user(), $request->toDto());
         return response()->json($user, 200);
     }
+    public function followUser(PatchUserRequest $request, string $id)
+    {
+        $model = $this->repository->find($id);
+        Gate::authorize("follow", $model);
+        $sucess = false;
+        if (count($request->user()->following()->wherePivot("followed_user_id", $model->id)->get()) == 0) {
+            $sucess = $this->repository->follow($request->user(), $model);
+        }
+        
+        if ($sucess) {
+            return response()->json(["message"=>"User followed successfully"],200);
+        }else{
+            return response()->json([
+                "message" => "User followed unsuccessfully"
+            ],400);
+        }
+    }
 }
