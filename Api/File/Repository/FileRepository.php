@@ -15,7 +15,12 @@ class FileRepository implements IFileRepository{
 
     public function findByUuid(string $uuid): ?File
     {
-        return File::where('uuid', $uuid)->first();
+        try {
+            $file = File::where('uuid', $uuid)->firstOrFail();
+            return $file;
+        } catch (\Throwable $th) {
+            throw $th;
+        }
     }
 
     public function update(File $file, array $data): bool
@@ -33,7 +38,8 @@ class FileRepository implements IFileRepository{
 
     public function setContent(File $file, $content): bool
     {
-        return $file->setContent($content);
+        $filename = $file->getFilePath($content);
+        return  $content->storeAs('', $filename, 'public');
     }
 
     public function getContent(File $file)

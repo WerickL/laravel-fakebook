@@ -93,6 +93,19 @@ class FileController extends Controller
         ],400);
     }
     public function getFile(Request $request){
-        return response()->json("Opa",200);
+        $uuid = $request->query("uuid");
+        $file = $this->repository->findByUuid($request->query("uuid"));
+        if (empty($file)) {
+            return response()->json([
+                "detail" => "Arquivo não encontrado"
+            ], 404);
+        }
+        $content = $this->repository->getContent($file);
+        if (empty($content)) {
+            return response()->json([
+                "detail" => "Conteúdo do arquivo não encontrado"
+            ], 404);
+        }
+        return response()->json($content,200);
     }
 }

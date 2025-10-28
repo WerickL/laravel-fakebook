@@ -21,7 +21,7 @@ class PostsController extends Controller
     public function index(Request $request)
     {
         $posts = $this->repository->findAll($request->user());
-        return Inertia::render("Feed/Index", [
+        return Inertia::render("Feed", [
            "posts" => $posts
         ]);
     }

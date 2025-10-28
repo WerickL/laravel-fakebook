@@ -21,7 +21,6 @@ class PostController extends Controller
         if ($request->query("publish") == true) {
             $post = $this->repository->publish($post);
         }
-        
         return response()->json($post, 201);
     }
     public function patchPost(PostRequest $request, $id){
@@ -37,6 +36,7 @@ class PostController extends Controller
     }
     public function getPost(PostRequest $request){
         $posts = $this->repository->findAll($request->user());
+        $posts->load('files');
         return response()->json($posts);
     }
 }

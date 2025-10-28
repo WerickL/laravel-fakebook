@@ -5,6 +5,7 @@ namespace Api\File\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Ramsey\Uuid\Uuid;
 
@@ -33,7 +34,7 @@ class File extends Model
     }
     public function setContent($content): bool
     {
-        return Storage::put($this->getFilePath(), $content);
+        return Storage::put($this->getFilePath($content), $content);
     }
     public function getContent()
     {
@@ -41,11 +42,12 @@ class File extends Model
             ? Storage::get($this->getFilePath())
             : null;
     }
-    public function getFilePath(): string
+    public function getFilePath($content = null): string
     {
-        return "files/{$this->uuid}";
+        return "files/{$this->uuid}.png";
+    
     }
-    public function deleteContent(): bool
+        public function deleteContent(): bool
     {
         return Storage::delete($this->getFilePath());
     }

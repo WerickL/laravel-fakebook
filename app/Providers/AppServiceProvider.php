@@ -5,6 +5,7 @@ namespace App\Providers;
 use Api\Post\Model\Post;
 use Api\User\Model\User;
 use Api\User\Policies\UserPolicy;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Passport\Passport;
@@ -33,5 +34,8 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('update-post', function (User $user, Post $post) {
             return $user->id === $post->user_id;
         });
+        Relation::morphMap([
+            'post' => Post::class,
+        ]);
     }
 }
