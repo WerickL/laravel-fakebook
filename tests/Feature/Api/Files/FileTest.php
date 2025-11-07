@@ -25,7 +25,7 @@ class FileTest extends TestCase
     }
     public function test_create_file_using_api(): void
     {
-        Storage::fake();
+        Storage::fake('public');
         $file = UploadedFile::fake()->image('post.png');
 
         $user = User::factory()->create();
@@ -39,7 +39,7 @@ class FileTest extends TestCase
         $response->assertStatus(201);
         $responseData = $response->json();
         $uuid = $responseData['uuid'];
-        Storage::disk()->assertExists("files/{$uuid}");
+        Storage::disk("public")->assertExists("files/{$uuid}.png");
     }
     public function test_not_create_using_invalid_params():void
     {
@@ -50,7 +50,7 @@ class FileTest extends TestCase
     }
     public function test_not_create_file_in_another_user_post(): void
     {
-        Storage::fake();
+        Storage::fake('public');
         $file = UploadedFile::fake()->image('post.png');
         
         // Criar dois usuários diferentes
@@ -76,7 +76,7 @@ class FileTest extends TestCase
     }
     public function test_upload_and_read_file(): void
     {
-        Storage::fake();
+        Storage::fake('public');
         $file = UploadedFile::fake()->image('post.png');
         $fileContent = file_get_contents($file->getPathname());
 
@@ -95,17 +95,26 @@ class FileTest extends TestCase
         $uuid = $responseData['uuid'];
         
         // Verificar se o arquivo foi salvo
-        Storage::disk()->assertExists("files/{$uuid}");
+        if (Storage::disk('public')->exists("files/{$uuid}.png")) {
+            Storage::disk('public')->assertExists("files/{$uuid}.png");
+        } else {
+            $this->fail("Arquivo não encontrado");
+        }
         
         // Ler o arquivo
-        $readResponse = $this->get("/api/file/{$uuid}");
-        $readResponse->assertStatus(200);
-        $this->assertEquals($fileContent, $readResponse->getContent());
+        $readResponse = $this->get("/api/file/{$uuid}",[
+            "Accept" => "application/json"
+        ]);
+        if ($readResponse->status() == 200) {
+            $this->assertEquals($fileContent, $readResponse->getContent());
+        } else {
+            $this->fail($readResponse->getContent());
+        }
     }
 
     public function test_upload_file_to_draft_post(): void
     {
-        Storage::fake();
+        Storage::fake('public');
         $file = UploadedFile::fake()->image('post.png');
 
         $user = User::factory()->create();
@@ -131,13 +140,13 @@ class FileTest extends TestCase
         // Verificar se o arquivo foi vinculado ao post
         $this->assertDatabaseHas('files', [
             'fileable_id' => $post->id,
-            'fileable_type' => \Api\Post\Model\Post::class
+            'fileable_type' => "Post"
         ]);
     }
 
     public function test_cannot_upload_file_to_published_post(): void
     {
-        Storage::fake();
+        Storage::fake('public');
         $file = UploadedFile::fake()->image('post.png');
 
         $user = User::factory()->create();
@@ -163,7 +172,7 @@ class FileTest extends TestCase
 
     public function test_list_files_from_post(): void
     {
-        Storage::fake();
+        Storage::fake('public');
         $user = User::factory()->create();
         Passport::actingAs($user);
         
@@ -185,10 +194,9 @@ class FileTest extends TestCase
         }
 
         // Listar arquivos do post
-        $response = $this->get("/api/post/{$post->id}/files");
+        $response = $this->get("/api/post/{$post->id}");
         $response->assertStatus(200);
-        
-        $files = $response->json();
+        $files = $response->json()["files"];
         $this->assertCount(3, $files);
     }
 }

@@ -232,4 +232,60 @@ class PostTest extends TestCase
         
         $response->assertStatus(401);
     }
+    public function test_list_posts_includes_followed_users_posts(): void
+    {
+        $user = User::factory()->create();
+        $followedUser = User::factory()->create();
+        $notFollowedUser = User::factory()->create();
+
+        Passport::actingAs($user);
+        $response = $this->post("/api/post?publish=true", [
+            "description" => "My published post",
+        ], [
+            "Accept" => "application/json"
+        ]);
+        $response->assertStatus(201);
+
+        Passport::actingAs($followedUser);
+        $responseFollowed = $this->post("/api/post?publish=true", [
+            "description" => "Followed user post",
+        ], [
+            "Accept" => "application/json"
+        ]);
+        $responseFollowed->assertStatus(201);
+
+        Passport::actingAs($notFollowedUser);
+        $responseNotFollowed = $this->post("/api/post?publish=true", [
+            "description" => "Not followed user post",
+        ], [
+            "Accept" => "application/json"
+        ]);
+        $responseNotFollowed->assertStatus(201);
+
+        Passport::actingAs($user);
+        $followResponse = $this->get("/api/user/follow/{$followedUser->id}", [
+            "Accept" => "application/json"
+        ]);
+        $followResponse->assertStatus(200);
+
+        $listResponse = $this->get("/api/post", [
+            "Accept" => "application/json"
+        ]);
+
+        $listResponse->assertStatus(200);
+        $listResponse->assertJsonFragment([
+            "user_id" => $user->id,
+            "description" => "My published post",
+            "status" => "P"
+        ]);
+        $listResponse->assertJsonFragment([
+            "user_id" => $followedUser->id,
+            "description" => "Followed user post",
+            "status" => "P"
+        ]);
+        $listResponse->assertJsonMissing([
+            "user_id" => $notFollowedUser->id,
+            "description" => "Not followed user post"
+        ]);
+    }
 }

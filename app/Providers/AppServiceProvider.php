@@ -35,7 +35,7 @@ class AppServiceProvider extends ServiceProvider
             return $user->id === $post->user_id;
         });
         Relation::morphMap([
-            'post' => Post::class,
+            'Post' => Post::class,
         ]);
     }
 }

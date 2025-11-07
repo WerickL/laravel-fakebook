@@ -8,6 +8,8 @@ use Api\File\Repository\IFileRepository;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Ramsey\Uuid\Uuid;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Facades\Gate;
 
 class FileController extends Controller
 {
@@ -71,8 +73,36 @@ class FileController extends Controller
         //
     }
     public function postFile(CreateFileRequest $request){
+        $fileable = null;
         
-        $file = $this->repository->create($request->toDto());
+        if (!empty($request->post_id)) {
+            $post = \Api\Post\Model\Post::find($request->post_id);
+            if (empty($post)) {
+                return response()->json([
+                    "detail" => "Post não encontrado"
+                ], 404);
+            }
+            if ($post->status != \Api\Post\Model\PostStatusEnum::Draft) {
+                return response()->json([
+                    "detail" => "Post não está em rascunho"
+                ], 403);
+            }
+            if (!Gate::allows("attachFile", $post)) {
+                return response()->json([
+                    "detail" => "Você não tem permissão para anexar arquivos a este post"
+                ], 403);
+            }
+            $fileable = $post;
+        }
+        $fileDto = $request->toDto();
+        if (!empty($fileable)) {
+            $fileDto->fileable_id = $fileable->id;
+            $fullyQualifiedName = $fileable::class;
+            $baseName = basename(str_replace('\\', '/', $fullyQualifiedName));
+            $fileDto->fileable_type = $baseName;
+        }
+
+        $file = $this->repository->create($fileDto);
         if (!empty($file)) {
             $contentFile =  $request->file('content');
             if (empty($contentFile)) {
@@ -92,9 +122,13 @@ class FileController extends Controller
             "detail" => "Um erro desconhecido ocorreu"
         ],400);
     }
-    public function getFile(Request $request){
-        $uuid = $request->query("uuid");
-        $file = $this->repository->findByUuid($request->query("uuid"));
+    public function getFile(Request $request, ?string $uuid = null){
+        if (empty($uuid)) {
+            return response()->json([
+                "detail" => "UUID do arquivo não informado"
+            ], 422);
+        }
+        $file = $this->repository->findByUuid($uuid);
         if (empty($file)) {
             return response()->json([
                 "detail" => "Arquivo não encontrado"
@@ -106,6 +140,7 @@ class FileController extends Controller
                 "detail" => "Conteúdo do arquivo não encontrado"
             ], 404);
         }
-        return response()->json($content,200);
+        return response($content, 200)
+    ->header('Content-Type', $file->content_type);
     }
 }

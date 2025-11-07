@@ -38,11 +38,11 @@ class File extends Model
     }
     public function getContent()
     {
-        return Storage::exists($this->getFilePath())
-            ? Storage::get($this->getFilePath())
+        return Storage::disk('public')->exists($this->getFilePath())
+            ? Storage::disk('public')->get($this->getFilePath())
             : null;
     }
-    public function getFilePath($content = null): string
+    public function getFilePath(): string
     {
         return "files/{$this->uuid}.png";
     

@@ -12,8 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('files', function (Blueprint $table) {
-            $table->unsignedBigInteger("fileable_id")->nullable()->change();
-            // fileable_type deve ser string, não bigInteger - corrigido na migração 2025_11_04_174243_fix_fileable_type_column
+            $table->string('fileable_type')->nullable()->change();
         });
     }
 
@@ -23,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('files', function (Blueprint $table) {
-            //
+            $table->unsignedBigInteger('fileable_type')->nullable()->change();
         });
     }
 };

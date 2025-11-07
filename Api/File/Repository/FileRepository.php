@@ -9,7 +9,25 @@ class FileRepository implements IFileRepository{
     public function create(FileDto $data): File
     {
         return DB::transaction(function () use ($data) {
-            return File::create($data->toArray());
+                $file = File::create($data->toArray());
+                if ($data->fileable_id) {
+                    $modelClass = "Api\\{$data->fileable_type}\\Model\\{$data->fileable_type}";
+
+                if (!class_exists($modelClass)) {
+                    throw new \Exception("Model {$data->fileable_type} não existe");
+                }
+
+                $fileable = $modelClass::find($data->fileable_id);
+
+                if (!$fileable) {
+                    throw new \Exception("Entidade {$data->fileable_type} com ID {$data->fileable_id} não encontrada");
+                }
+
+                $file->fileable()->associate($fileable);
+                $file->fileable_type = $data->fileable_type;
+                $file->save();
+            }
+            return $file;
         });
     }
 
@@ -36,9 +54,9 @@ class FileRepository implements IFileRepository{
         });
     }
 
-    public function setContent(File $file, $content): bool
+    public function setContent(File $file, $content): null|string
     {
-        $filename = $file->getFilePath($content);
+        $filename = $file->getFilePath();
         return  $content->storeAs('', $filename, 'public');
     }
 

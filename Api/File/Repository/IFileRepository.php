@@ -9,6 +9,6 @@ interface IFileRepository{
     public function delete(File $file):bool;
     public function findByUuid(string $uuid): ?File;
     public function update(File $file, array $data): bool;
-    public function setContent(File $file, $content): bool;
+    public function setContent(File $file, $content): null|string;
     public function getContent(File $file);
 }

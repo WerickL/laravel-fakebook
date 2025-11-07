@@ -35,7 +35,9 @@ class PostRepository implements IPostRepository{
      */
     public function findAll(User $user): Collection
     {
-        return Post::where("user_id", $user->id)->orWhereIn('user_id', $user->following)->get();
+        $userIds = $user->following()->pluck('users.id')->push($user->id);
+
+        return Post::whereIn('user_id', $userIds)->get();
     }
     public function patch(Post $post, PostDto $data): Post
     {

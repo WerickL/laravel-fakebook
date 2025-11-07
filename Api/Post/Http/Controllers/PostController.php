@@ -34,7 +34,12 @@ class PostController extends Controller
         $post = $this->repository->patch($post, $request->toDto());
         return response()->json($post);
     }
-    public function getPost(PostRequest $request){
+    public function getPost(PostRequest $request, $id = null){
+        if ($id) {
+            $post = $this->repository->find($id);
+            $post->load('files');
+            return response()->json($post);
+        }
         $posts = $this->repository->findAll($request->user());
         $posts->load('files');
         return response()->json($posts);

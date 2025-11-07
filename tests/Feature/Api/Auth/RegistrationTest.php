@@ -109,20 +109,25 @@ class RegistrationTest extends TestCase
     
         $this->assertTrue($user1->following->contains($user2));
     }
-    // public function test_user_cannot_follow_same_user_twice()
-    // {
-    //     $user1 = User::factory()->create();
-    //     $user2 = User::factory()->create();
+    public function test_user_cannot_follow_same_user_twice()
+    {
+        $user1 = User::factory()->create();
+        $user2 = User::factory()->create();
 
-    //     $user1->following()->attach($user2->id);
-    //     $user1->following()->attach($user2->id); // Deve ser ignorado pelo banco (se a tabela pivot for única)
+        $user1->following()->attach($user2->id);
+        try {
+            $user1->following()->attach($user2->id); // Deve ser ignorado pelo banco (se a tabela pivot for única)
+        } catch (\Throwable $th) {
+            //
+        }
+        
 
-    //     $this->assertEquals(1, DB::table('follows')
-    //         ->where('follower_user_id', $user1->id)
-    //         ->where('followed_user_id', $user2->id)
-    //         ->count()
-    //     );
-    // }
+        $this->assertEquals(1, DB::table('follows')
+            ->where('follower_user_id', $user1->id)
+            ->where('followed_user_id', $user2->id)
+            ->count()
+        );
+    }
     public function test_user_can_follow_another_user_via_api()
     {
         $user1 = User::factory()->create();

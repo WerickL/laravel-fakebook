@@ -22,7 +22,8 @@ class CreateFileRequest extends FormRequest
             "name"=>"required|string|max:255",
             'content' => 'required',
             "description"=>"nullable|string|max:255",
-            "content_type"=>"required|string|max:255"
+            "content_type"=>"required|string|max:255",
+            "post_id"=>"nullable|exists:posts,id"
         ];
     }
 

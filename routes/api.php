@@ -13,11 +13,11 @@ Route::middleware('auth:api')->group(function () {
         return $request->user();
     });
     Route::post("/post", [PostController::class, "postPost"]);
-    Route::get("/post", [PostController::class, "getPost"]);
+    Route::get("/post/{id?}", [PostController::class, "getPost"]);
     Route::patch("/post/{id}", [PostController::class, "patchPost"]);
     Route::patch("/user/{id}", [UserController::class, "patchUser"]);
     Route::get("/user/follow/{id}", [UserController::class, "followUser"]);
-    Route::get("/file", [FileController::class, "getFile"]);
+    Route::get("/file/{uuid?}", [FileController::class, "getFile"]);
     Route::post("/file", [FileController::class, "postFile"]);
 });
 Route::post("/user", [UserController::class, "postUser"]);

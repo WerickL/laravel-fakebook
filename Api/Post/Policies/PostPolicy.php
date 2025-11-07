@@ -1,10 +1,12 @@
 <?php
 
-namespace Api\User\Policies;
+namespace Api\Post\Policies;
 
 use Api\User\Model\User;
+use Api\Post\Model\Post;
+use Illuminate\Auth\Access\Response;
 
-class UserPolicy
+class PostPolicy
 {
     /**
      * Determine whether the user can view any models.
@@ -17,7 +19,7 @@ class UserPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, User $model): bool
+    public function view(User $user, Post $post): bool
     {
         return false;
     }
@@ -25,23 +27,23 @@ class UserPolicy
     /**
      * Determine whether the user can create models.
      */
-    public function create(?User $user): bool
+    public function create(User $user): bool
     {
-        return true;
+        return false;
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, User $model): bool
+    public function update(User $user, Post $post): bool
     {
-        return $model->is($user);
+        return false;
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, User $model): bool
+    public function delete(User $user, Post $post): bool
     {
         return false;
     }
@@ -49,7 +51,7 @@ class UserPolicy
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, User $model): bool
+    public function restore(User $user, Post $post): bool
     {
         return false;
     }
@@ -57,12 +59,12 @@ class UserPolicy
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, User $model): bool
+    public function forceDelete(User $user, Post $post): bool
     {
         return false;
     }
-    public function follow(User $user, User $model): bool
+    public function attachFile(User $user, Post $post): bool
     {
-        return !$model->is($user);
+        return $post->user_id === $user->id;
     }
 }
