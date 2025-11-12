@@ -1,6 +1,8 @@
 <?php
 
+use Api\Comment\Http\Controllers\CommentController;
 use Api\File\Http\Controllers\FileController;
+use Api\Like\Http\Controllers\LikeController;
 use Api\Post\Http\Controllers\PostController;
 use Api\User\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
@@ -19,5 +21,8 @@ Route::middleware('auth:api')->group(function () {
     Route::get("/user/follow/{id}", [UserController::class, "followUser"]);
     Route::get("/file/{uuid?}", [FileController::class, "getFile"]);
     Route::post("/file", [FileController::class, "postFile"]);
+    Route::post("/like", [LikeController::class, "postLike"]);
+    Route::post('/comment', [CommentController::class, 'postComment']);
+    Route::patch('/comment/{id}', [CommentController::class, 'patchComment']);
 });
 Route::post("/user", [UserController::class, "postUser"]);

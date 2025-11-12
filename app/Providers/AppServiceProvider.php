@@ -2,9 +2,11 @@
 
 namespace App\Providers;
 
+use Api\Comment\Policies\CommentPolicy;
 use Api\Post\Model\Post;
 use Api\User\Model\User;
 use Api\User\Policies\UserPolicy;
+use Dom\Comment;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
@@ -31,6 +33,7 @@ class AppServiceProvider extends ServiceProvider
             return 'Api\\'. class_basename($modelClass). '\\Policies\\' . class_basename($modelClass) . 'Policy';
         });
         Gate::policy(User::class, UserPolicy::class);
+        Gate::policy(Comment::class, CommentPolicy::class);
         Gate::define('update-post', function (User $user, Post $post) {
             return $user->id === $post->user_id;
         });
