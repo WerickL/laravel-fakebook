@@ -14,7 +14,7 @@ class CommentPolicy
         //
     }
 
-    public function updateComment(User $user, $comment): bool
+    public function updateOrDeleteComment(User $user, $comment): bool
     {
         return $user->id === $comment->user_id;
     }

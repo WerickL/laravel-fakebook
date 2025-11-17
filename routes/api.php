@@ -24,5 +24,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post("/like", [LikeController::class, "postLike"]);
     Route::post('/comment', [CommentController::class, 'postComment']);
     Route::patch('/comment/{id}', [CommentController::class, 'patchComment']);
+    Route::delete('/comment/{id}', [CommentController::class, 'deleteComment']);
+    Route::get('/comment/{id?}', [CommentController::class, 'fetchComments']);
 });
 Route::post("/user", [UserController::class, "postUser"]);

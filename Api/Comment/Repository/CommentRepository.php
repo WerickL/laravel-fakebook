@@ -3,6 +3,7 @@ namespace Api\Comment\Repository;
 
 use Api\Comment\Model\Comment;
 use Api\Comment\Model\CommentDto;
+use Api\User\Model\User;
 use Exception;
 
 class CommentRepository {
@@ -24,6 +25,16 @@ class CommentRepository {
     public function patch(Comment $comment, CommentDto $data): Comment {
         $comment = $comment->fill($data->toArray());
         $comment->save();
+        
         return $comment;
+    }
+    public function delete(Comment $comment): bool {
+        return $comment->delete();
+    }
+    public function fetchCommentsByPostId(int $postId){
+        return Comment::where("post_id", $postId)->get();
+    }
+    public function fetchComments(User $user){
+        return $user->comments()->get();
     }
 }

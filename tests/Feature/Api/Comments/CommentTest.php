@@ -495,6 +495,8 @@ class CommentTest extends TestCase
                 'content' => 'Comentário único',
                 'post_id' => $post->id,
                 'user_id' => $user->id,
+                "created_at" => $comment->created_at->toJSON(),
+                "updated_at" => $comment->updated_at->toJSON()
             ]);
         }
     }
