@@ -73,4 +73,8 @@ class User extends Authenticatable
     {
         return UserFactory::new();
     }
+    public function comments(): HasMany
+    {
+        return $this->hasMany(\Api\Comment\Model\Comment::class);
+    }
 }

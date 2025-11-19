@@ -8,10 +8,8 @@ use Api\Comment\Http\Requests\PostCommentRequest;
 use App\Http\Controllers\Controller;
 use Api\Comment\Model\Comment;
 use Api\Comment\Repository\CommentRepository;
-use Api\Post\Model\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
-use PhpParser\Node\Stmt\TryCatch;
 
 class CommentController extends Controller
 {
@@ -117,7 +115,6 @@ class CommentController extends Controller
                 return $comments;
                 break;
             default:
-                // all from logged user\
                 $comments = $this->repository->fetchComments($request->user());
                 return $comments;
                 break;

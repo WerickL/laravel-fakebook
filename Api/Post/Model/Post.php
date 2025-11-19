@@ -2,13 +2,16 @@
 
 namespace Api\Post\Model;
 
+use Api\Comment\Model\Comment;
 use Api\File\Model\File;
+use Api\Like\Model\Like;
 use Api\User\Model\User;
 use Database\Factories\PostFactory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Post extends Model
@@ -37,5 +40,13 @@ class Post extends Model
         return [
             'status' => PostStatusEnum::class,
         ];
+    }
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class);
+    }
+    public function likes(): HasMany
+    {
+        return $this->hasMany(Like::class);
     }
 }

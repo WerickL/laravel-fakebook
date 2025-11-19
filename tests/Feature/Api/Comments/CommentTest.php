@@ -500,5 +500,95 @@ class CommentTest extends TestCase
             ]);
         }
     }
+
+    public function test_user_can_reply_to_comment_via_api(): void
+    {
+        $author = User::factory()->create();
+        $post = Post::factory()->create([
+            'user_id' => $author->id,
+            'status' => PostStatusEnum::Published
+        ]);
+
+        $parentComment = Comment::create([
+            'user_id' => $author->id,
+            'post_id' => $post->id,
+            'content' => 'Comentário original',
+        ]);
+
+        $replyAuthor = User::factory()->create();
+
+        Passport::actingAs($replyAuthor);
+        $response = $this->post('/api/comment', [
+            'post_id' => $post->id,
+            'content' => 'Resposta ao comentário',
+            'parent_comment_id' => $parentComment->id,
+        ], [
+            'Accept' => 'application/json'
+        ]);
+
+        if ($response->status() !== 404) {
+            $response->assertStatus(201);
+            $response->assertJsonFragment([
+                'parent_comment_id' => $parentComment->id,
+            ]);
+            $this->assertDatabaseHas('comments', [
+                'content' => 'Resposta ao comentário',
+                'parent_comment_id' => $parentComment->id,
+                'post_id' => $post->id,
+                'user_id' => $replyAuthor->id,
+            ]);
+        }
+    }
+
+    public function test_can_list_comment_replies_via_api(): void
+    {
+        $user = User::factory()->create();
+        $post = Post::factory()->create([
+            'user_id' => $user->id,
+            'status' => PostStatusEnum::Published
+        ]);
+
+        $parentComment = Comment::create([
+            'user_id' => $user->id,
+            'post_id' => $post->id,
+            'content' => 'Comentário raiz',
+        ]);
+
+        $replyOne = Comment::create([
+            'user_id' => $user->id,
+            'post_id' => $post->id,
+            'content' => 'Primeira resposta',
+            'parent_comment_id' => $parentComment->id,
+        ]);
+
+        $replyTwo = Comment::create([
+            'user_id' => $user->id,
+            'post_id' => $post->id,
+            'content' => 'Segunda resposta',
+            'parent_comment_id' => $parentComment->id,
+        ]);
+
+        Passport::actingAs($user);
+        $response = $this->get("/api/comment/{$parentComment->id}", [
+            'Accept' => 'application/json'
+        ]);
+
+        if ($response->status() !== 404) {
+            $response->assertStatus(200);
+            $response->assertJsonFragment([
+                'id' => $parentComment->id,
+                'content' => 'Comentário raiz',
+            ]);
+            $response->assertJsonCount(2, 'comments');
+            $response->assertJsonFragment([
+                'id' => $replyOne->id,
+                'content' => 'Primeira resposta',
+            ]);
+            $response->assertJsonFragment([
+                'id' => $replyTwo->id,
+                'content' => 'Segunda resposta',
+            ]);
+        }
+    }
 }
 

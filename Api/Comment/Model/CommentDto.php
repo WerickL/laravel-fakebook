@@ -6,14 +6,16 @@
     {
         public function __construct(
             public string $content,
-            public ?string $postId,
-            public User $user)
+            public ?int $postId,
+            public User $user,
+            public ?int $parentCommentId = null)
         {
         }
         
         public function toArray(){
             return [
-                "content" => $this->content
+                "content" => $this->content,
+                "parent_comment_id" => $this->parentCommentId
             ];
         }
     }

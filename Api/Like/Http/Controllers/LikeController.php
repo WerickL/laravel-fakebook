@@ -4,11 +4,15 @@ namespace Api\Like\Http\Controllers;
 
 use Api\Like\Http\Requests\PostLikeRequest;
 use Api\Like\Model\Like;
+use Api\Like\Repository\ILikeRepository;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 class LikeController extends Controller
 {
+    public function __construct(protected ILikeRepository $repository) {
+
+    }
     /**
      * Display a listing of the resource.
      */
@@ -66,23 +70,13 @@ class LikeController extends Controller
     }
     public function postLike(PostLikeRequest $request)
     {
-        // return response()->json(['message' => 'Needs Authentication'], 401);
-        $like = new Like();
-        $like->user_id = $request->user()->id;
-        if($request->has('comment_id')) {
-            $like->comment_id = $request->input('comment_id');
-        } else if ($request->has('post_id')) {
-            $like->post_id = $request->input('post_id');
-        } else {
-            return response()->json(['message' => 'Either post_id or comment_id must be provided'], 422);
-        }
         try {
-            $like->save();
+            $like = $this->repository->create($request->toDto());
+            return response()->json(['message' => 'Like added successfully', 'like' => $like], 201);
         } catch (\Throwable $th) {
             return response()->json(['message' => 'Failed to add like', 'error' => $th->getMessage()], 400);
         }
         
-
-        return response()->json(['message' => 'Like added successfully', 'like' => $like], 201);
+        
     }
 }

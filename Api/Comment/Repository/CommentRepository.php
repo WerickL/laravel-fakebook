@@ -3,6 +3,7 @@ namespace Api\Comment\Repository;
 
 use Api\Comment\Model\Comment;
 use Api\Comment\Model\CommentDto;
+use Api\Post\Model\Post;
 use Api\User\Model\User;
 use Exception;
 
@@ -13,6 +14,7 @@ class CommentRepository {
             $comment->content = $commentDto->content;
             $comment->post_id = $commentDto->postId;
             $comment->user_id = $commentDto->user->id;
+            $comment->parent_comment_id = $commentDto->parentCommentId;
             $comment->save();
             return $comment;
         } catch (\Throwable $th) {
@@ -20,7 +22,8 @@ class CommentRepository {
         }
     }
     public function find($id): Comment {
-        return Comment::where("id", (int) $id)->first();
+        return Comment::with('comments')->findOrFail((int) $id);
+        //return Comment::with('comments')->where("id", (int) $id)->first();
     }
     public function patch(Comment $comment, CommentDto $data): Comment {
         $comment = $comment->fill($data->toArray());
@@ -32,9 +35,13 @@ class CommentRepository {
         return $comment->delete();
     }
     public function fetchCommentsByPostId(int $postId){
-        return Comment::where("post_id", $postId)->get();
+        return Post::findOrFail($postId)
+            ->comments()
+            ->whereNull('parent_comment_id')
+            ->with('comments')
+            ->get();
     }
     public function fetchComments(User $user){
-        return $user->comments()->get();
+        return $user->comments()->whereNull('parent_comment_id')->with('comments')->get();
     }
 }

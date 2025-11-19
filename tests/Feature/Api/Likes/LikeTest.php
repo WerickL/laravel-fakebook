@@ -39,7 +39,7 @@ class LikeTest extends TestCase
     public function test_create_like_for_comment_directly_in_database(): void
     {
         $user = User::factory()->create();
-        $comment = Comment::create();
+        $comment = Comment::factory()->create();
 
         $like = Like::create([
             'user_id' => $user->id,
@@ -78,7 +78,7 @@ class LikeTest extends TestCase
     public function test_unique_constraint_prevents_duplicate_like_on_same_comment(): void
     {
         $user = User::factory()->create();
-        $comment = Comment::create();
+        $comment = Comment::factory()->create();
 
         Like::create([
             'user_id' => $user->id,
@@ -141,7 +141,7 @@ class LikeTest extends TestCase
     {
         $user1 = User::factory()->create();
         $user2 = User::factory()->create();
-        $comment = Comment::create();
+        $comment = Comment::factory()->create();
 
         $like1 = Like::create([
             'user_id' => $user1->id,
@@ -180,7 +180,7 @@ class LikeTest extends TestCase
     public function test_foreign_key_cascade_deletes_like_when_comment_is_deleted(): void
     {
         $user = User::factory()->create();
-        $comment = Comment::create();
+        $comment = Comment::factory()->create();
 
         $like = Like::create([
             'user_id' => $user->id,
@@ -221,7 +221,7 @@ class LikeTest extends TestCase
             'user_id' => $user->id,
             'status' => PostStatusEnum::Published
         ]);
-        $comment = Comment::create();
+        $comment = Comment::factory()->create();
 
         $likePost = Like::create([
             'user_id' => $user->id,
@@ -295,7 +295,7 @@ class LikeTest extends TestCase
     public function test_create_like_for_comment_via_api(): void
     {
         $user = User::factory()->create();
-        $comment = Comment::create();
+        $comment = Comment::factory()->create();
 
         Passport::actingAs($user);
         $response = $this->post('/api/like', [

@@ -12,7 +12,8 @@ class CommentRequest extends FormRequest
         return new CommentDto(
             content: $this->input("content"),
             postId: $this->input("post_id"),
-            user: $this->user()
+            user: $this->user(),
+            parentCommentId: $this->input("parent_comment_id")
         );
     }
 }
